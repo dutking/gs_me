@@ -1,0 +1,1 @@
+Creates run.sh to run GenomeSpy locally with selected specs.
