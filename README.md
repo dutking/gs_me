@@ -1,4 +1,4 @@
-Creates run.sh to run GenomeSpy locally with selected specs.
+Runs a web server with GenomeSpy and selected specs.
 
 # Install the tool
 ```sh
