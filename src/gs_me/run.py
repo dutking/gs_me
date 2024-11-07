@@ -33,16 +33,17 @@ def get_specs(input_dir: str) -> list[str]:
     for root, _, files in os.walk(input_dir):
         for file in files:
             if file.endswith(".json"):
-                with open(os.path.join(root, file)) as f:
+                with open(os.path.join(root, file), encoding="utf-8") as f:
                     try:
                         data = json.load(f)
-                        if (
-                            data["$schema"]
-                            == "https://unpkg.com/@genome-spy/core/dist/schema.json"
-                        ):
-                            specs.append(
-                                os.path.join(root.replace(input_dir, ""), file)
-                            )
+                        if isinstance(data, dict) and "$schema" in data:
+                            if (
+                                data["$schema"]
+                                == "https://unpkg.com/@genome-spy/core/dist/schema.json"
+                            ):
+                                specs.append(
+                                    os.path.join(root.replace(input_dir, ""), file)
+                                )
                     except json.JSONDecodeError:
                         continue
     return list(sorted(specs))
