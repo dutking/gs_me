@@ -1,11 +1,17 @@
-Runs a web server with GenomeSpy and selected specs.
+# GS-ME
 
-# Install the tool
+## Description
+
+The tool scans provided folder for json files with valid GenomeSpy schema, runs a GenomeSpy web server with all found genomespy spec json files available in select menu so that you can observe multiple files in one session.
+
+## Installation
+
 ```sh
 uv tool install gs-me
 ```
 
-# Run the tool
+## Usage
+
 ```sh
-gs-me --input /path/to/data
+gs-me --input /path/to/directory/with/genomespy/json/files
 ```

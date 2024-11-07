@@ -1,5 +1,6 @@
 import argparse
 import http.server
+import json
 import os
 import socketserver
 import threading
@@ -9,33 +10,69 @@ from importlib import resources
 
 
 def parse_args():
+    """Parse command line arguments.
+    --input: Path to the directory containing the genome-spy specs jsons.
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--input", type=str, required=True, help="Path to the directory"
+        "--input",
+        type=str,
+        required=True,
+        help="Path to the directory containing the genome-spy specs jsons",
     )
     return parser.parse_args()
 
 
-def get_specs(input_dir):
+def get_specs(input_dir: str) -> list[str]:
+    """
+    Get a list of genome-spy specs from the input directory.
+    Args:
+        input_dir: Path to the directory containing the genome-spy specs jsons.
+    """
     specs = []
     for root, _, files in os.walk(input_dir):
         for file in files:
-            if file.endswith("spec.json"):
-                specs.append(os.path.join(root.replace(input_dir, ""), file))
+            if file.endswith(".json"):
+                with open(os.path.join(root, file)) as f:
+                    try:
+                        data = json.load(f)
+                        if (
+                            data["$schema"]
+                            == "https://unpkg.com/@genome-spy/core/dist/schema.json"
+                        ):
+                            specs.append(
+                                os.path.join(root.replace(input_dir, ""), file)
+                            )
+                    except json.JSONDecodeError:
+                        continue
     return list(sorted(specs))
 
 
-def specs_to_options(specs):
+def specs_to_options(specs: list[str]) -> str:
+    """
+    Converts found spec jsons paths into html <option>.
+    Args:
+        specs: List of genome-spy spec jsons paths.
+    """
     return "\n".join([f'<option value="{spec}">{spec}</option>' for spec in specs])
 
 
-def insert_options_to_html(options):
+def insert_options_to_html(options: str) -> str:
+    """
+    Insert the options into the genome-spy index.html.
+    Args:
+        options: HTML <option> elements.
+    """
     with resources.files("gs_me").joinpath("genomespy/index.html").open("r") as f:
         html = f.read()
     return html.replace("<!-- Options will be inserted here -->", options)
 
 
 class HTMLHandler(http.server.SimpleHTTPRequestHandler):
+    """
+    Custom HTTP request handler to serve the modified genome-spy index.html.
+    """
+
     html_content = ""
 
     def do_GET(self):
@@ -51,7 +88,17 @@ class HTMLHandler(http.server.SimpleHTTPRequestHandler):
         pass
 
 
-def find_free_port(start_port=8000, max_tries=100):
+def find_free_port(start_port: int = 8000, max_tries: int = 100) -> int:
+    """
+    Find a free port.
+    Args:
+        start_port: The port number to start the search from.
+        max_tries: The maximum number of tries to find a free port.
+    Returns:
+        The first free port found.
+    Raises:
+        RuntimeError: If no free port is found after max_tries attempts.
+    """
     for port in range(start_port, start_port + max_tries):
         try:
             with socketserver.TCPServer(("", port), None) as s:
@@ -61,7 +108,14 @@ def find_free_port(start_port=8000, max_tries=100):
     raise RuntimeError(f"Could not find a free port after {max_tries} attempts")
 
 
-def start_server(input_dir, html_content, port):
+def start_server(input_dir, html_content, port) -> None:
+    """
+    Start the HTTP server.
+    Args:
+        input_dir: Path to the directory containing the genome-spy specs jsons.
+        html_content: The modified genome-spy index.html.
+        port: The port number to start the server on.
+    """
     HTMLHandler.html_content = html_content
     os.chdir(input_dir)
 
