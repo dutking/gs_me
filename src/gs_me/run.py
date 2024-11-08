@@ -137,13 +137,14 @@ def main():
     specs = get_specs(args.input)
     options = specs_to_options(specs)
     html_data = insert_options_to_html(options)
-    print("Starting server...")
+
     try:
         port = find_free_port()
     except RuntimeError as e:
         print(f"Error: {e}")
         return
 
+    print(f"Starting server on http://localhost:{port}")
     server_thread = threading.Thread(
         target=start_server, args=(args.input, html_data, port), daemon=True
     )
