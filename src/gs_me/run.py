@@ -144,12 +144,14 @@ def main():
         print(f"Error: {e}")
         return
 
-    print(f"Starting server on http://localhost:{port}")
     server_thread = threading.Thread(
         target=start_server, args=(args.input, html_data, port), daemon=True
     )
     server_thread.start()
     time.sleep(1)
+
+    print(f"Server started on http://localhost:{port}")
+    print("Press Ctrl+C to stop the server.")
 
     webbrowser.open(f"http://localhost:{port}")
 
@@ -158,8 +160,6 @@ def main():
             time.sleep(1)
     except KeyboardInterrupt:
         print("\nShutting down server...")
-
-    print("Press Ctrl+C to stop the server.")
 
 
 if __name__ == "__main__":
