@@ -38,12 +38,12 @@
                 insertSelector()
             }
 
-            function setPurity(purity) {
+            export function setPurity(purity) {
                 window.customSelector.querySelector("#purity").innerText =
                     purity
             }
 
-            function setPloidy(ploidy) {
+            export function setPloidy(ploidy) {
                 window.customSelector.querySelector("#ploidy").innerText =
                     ploidy
             }
@@ -62,7 +62,8 @@
                 if (selector) {
                     selector.addEventListener("change", async function () {
                         const path = this.value
-                        console.log(path)
+                        window.currentPath = path
+                        console.log(window.currentPath)
                         await window.GSAPI.finalize()
                         window.GSAPI = null
 
@@ -81,6 +82,8 @@
                     const first_path = document.querySelector(
                         ".order-selector option:first-child"
                     ).value
+                    window.currentPath = first_path
+                    console.log(window.currentPath)
                     window.customSelector = document.querySelector(
                         ".selector-container"
                     )

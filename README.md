@@ -15,3 +15,9 @@ uv tool install gs-me
 ```sh
 gs-me --input /path/to/directory/with/genomespy/json/files
 ```
+
+## Notes
+
+- The tool saves <select> in window.customSelect
+- The tool saves current spec path in window.currentPath
+- The tool saves GenomeSpy API object in window.GSAPI
