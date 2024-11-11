@@ -9,129 +9,17 @@
         <link
             rel="stylesheet"
             type="text/css"
-            href="https://cdn.jsdelivr.net/npm/@genome-spy/app@0.56.x/dist/style.css" />
+            href="https://cdn.jsdelivr.net/npm/@genome-spy/app@0.56.x/dist/style.css"
+        />
+        <link rel="stylesheet" type="text/css" href="style.css" />
         <script
             type="text/javascript"
             src="https://cdn.jsdelivr.net/npm/@genome-spy/app@0.56.x/dist/index.js"
-            defer></script>
+            defer
+        ></script>
 
         <!-- Application logic -->
-        <script type="module" defer>
-            async function drawPlot(path) {
-                const response = await fetch(path)
-                const spec_data = await response.json()
-
-                if ("bookmarks" in spec_data) {
-                    const bookmarks_path = path.replace(
-                        "spec.json",
-                        "bookmarks.json"
-                    )
-                    spec_data.bookmarks.remote.url = bookmarks_path
-                }
-
-                if ("purity" in spec_data) setPurity(spec_data.purity)
-                if ("ploidy" in spec_data) setPloidy(spec_data.ploidy)
-
-                console.log(spec_data)
-                const container = document.querySelector(".container")
-                window.GSAPI = await genomeSpyApp.embed(container, spec_data)
-                insertSelector()
-            }
-
-            export function setPurity(purity) {
-                window.customSelector.querySelector("#purity").innerText =
-                    purity
-            }
-
-            export function setPloidy(ploidy) {
-                window.customSelector.querySelector("#ploidy").innerText =
-                    ploidy
-            }
-
-            function insertSelector() {
-                const target = document.querySelector(
-                    ".container genome-spy-bookmark-button"
-                )
-                target.after(window.customSelector)
-            }
-
-            window.addEventListener("load", async () => {
-                console.log("Page loaded")
-                const selector = document.querySelector(".order-selector")
-
-                if (selector) {
-                    selector.addEventListener("change", async function () {
-                        const path = this.value
-                        window.currentPath = path
-                        console.log(window.currentPath)
-                        await window.GSAPI.finalize()
-                        window.GSAPI = null
-
-                        const container = document.querySelector(".container")
-                        container.innerHTML = ""
-                        const newContainer = document.createElement("div")
-                        newContainer.className = "container"
-                        container.parentNode.replaceChild(
-                            newContainer,
-                            container
-                        )
-
-                        await drawPlot(path)
-                    })
-
-                    const first_path = document.querySelector(
-                        ".order-selector option:first-child"
-                    ).value
-                    window.currentPath = first_path
-                    console.log(window.currentPath)
-                    window.customSelector = document.querySelector(
-                        ".selector-container"
-                    )
-                    await drawPlot(first_path)
-                }
-            })
-        </script>
-
-        <!-- Styles -->
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-
-            body {
-                background-color: #f0f0f0;
-                position: relative;
-            }
-
-            .container {
-                box-sizing: border-box;
-                width: 100%;
-                height: 100vh;
-            }
-
-            .selector-container {
-                display: none;
-                justify-content: center;
-                align-items: center;
-                flex-direction: row;
-                gap: 10px;
-            }
-
-            .selector-container p {
-                color: white;
-                font-family: sans-serif;
-            }
-
-            .selector-container p:has(span:empty) {
-                display: none;
-            }
-
-            .container .selector-container {
-                display: flex;
-            }
-        </style>
+        <script type="module" src="script.js" defer></script>
     </head>
 
     <body>

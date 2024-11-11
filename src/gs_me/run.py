@@ -86,6 +86,24 @@ class HTMLHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header("Expires", "0")
             self.end_headers()
             self.wfile.write(self.html_content.encode())
+        elif self.path == "/style.css":
+            with resources.files("gs_me").joinpath("genomespy/style.css").open(
+                "r"
+            ) as f:
+                content = f.read()
+            self.send_response(200)
+            self.send_header("Content-type", "text/css")
+            self.end_headers()
+            self.wfile.write(content.encode())
+        elif self.path == "/script.js":
+            with resources.files("gs_me").joinpath("genomespy/script.js").open(
+                "r"
+            ) as f:
+                content = f.read()
+            self.send_response(200)
+            self.send_header("Content-type", "application/javascript")
+            self.end_headers()
+            self.wfile.write(content.encode())
         else:
             super().do_GET()
 
